@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>University Admin Portal</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; }
+        .dashboard-box { border: 2px solid #333; padding: 20px; border-radius: 10px; background: #f9f9f9; }
+        input { padding: 10px; font-size: 16px; width: 200px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>University Admin Portal</h1>
+    <p>Enter a Student ID to view integrated data from MySQL and MongoDB:</p>
+    <input type="number" id="studentId" placeholder="Student ID (e.g. 4)">
+    <button onclick="fetchDashboard()">Fetch Integrated Data</button>
+
+    <div id="result" class="dashboard-box" style="margin-top: 30px; display: none;">
+        <h3>Integrated Dashboard View</h3>
+        <div id="data-content"></div>
+    </div>
+
+    <script>
+        async function fetchDashboard() {
+            const sid = document.getElementById('studentId').value;
+            const res = await fetch(`http://127.0.0.1:8000/dashboard/${sid}`);
+            const data = await res.json();
+            
+            if (res.ok) {
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('data-content').innerHTML = `
+                    <h4>MySQL Data (Profile):</h4>
+                    <p><strong>Name:</strong> ${data.profile.first_name} ${data.profile.last_name}</p>
+                    <p><strong>GPA:</strong> ${data.profile.gpa}</p>
+                    <h4>MongoDB Data (Notifications):</h4>
+                    <pre>${JSON.stringify(data.unread_notifications, null, 2)}</pre>
+                `;
+            } else {
+                alert("Error: Could not fetch data. Ensure your FastAPI server is running.");
+            }
+        }
+    </script>
+</body>
+</html>
