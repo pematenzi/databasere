@@ -3,7 +3,7 @@
 
 
 DROP DATABASE IF EXISTS university_portal;
-CREATE DATABASE university_portal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE university_portal;
 
 USE university_portal;
 
