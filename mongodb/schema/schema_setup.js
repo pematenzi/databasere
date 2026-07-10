@@ -1,15 +1,6 @@
-// =====================================================================
-// University Student Portal - MongoDB Schema Setup
-// Run with: mongosh university_portal < schema_setup.js
-// (Standard mongosh/MongoDB syntax - deploy to local mongod or Atlas)
-// =====================================================================
 db = db.getSiblingDB("university_portal");
 
-// ---------------------------------------------------------------
-// 1. course_reviews - semi-structured, one doc per review
-//    Embeds: nothing nested (flat, high write volume, read by course_id)
-//    References: student_id, course_id (foreign keys back to MySQL)
-// ---------------------------------------------------------------
+
 db.createCollection("course_reviews", {
   validator: {
     $jsonSchema: {
@@ -31,12 +22,7 @@ db.course_reviews.createIndex({ course_id: 1 });
 db.course_reviews.createIndex({ student_id: 1 });
 db.course_reviews.createIndex({ rating: -1 });
 
-// ---------------------------------------------------------------
-// 2. discussion_forums - discussion threads with EMBEDDED replies
-//    Justification: replies are always read together with the parent
-//    thread, are bounded in number (typically < few hundred), and are
-//    never queried independently of the thread -> embedding is correct.
-// ---------------------------------------------------------------
+
 db.createCollection("discussion_forums", {
   validator: {
     $jsonSchema: {
@@ -69,11 +55,7 @@ db.createCollection("discussion_forums", {
 db.discussion_forums.createIndex({ course_id: 1, created_at: -1 });
 db.discussion_forums.createIndex({ author_student_id: 1 });
 
-// ---------------------------------------------------------------
-// 3. notifications - varied/polymorphic structure per notification type
-//    Referenced by student_id only (no embedding - unbounded, high volume,
-//    frequently queried/paginated/deleted independently per student).
-// ---------------------------------------------------------------
+
 db.createCollection("notifications", {
   validator: {
     $jsonSchema: {
@@ -93,11 +75,7 @@ db.createCollection("notifications", {
 db.notifications.createIndex({ student_id: 1, read: 1 });
 db.notifications.createIndex({ created_at: -1 });
 
-// ---------------------------------------------------------------
-// 4. activity_logs - unstructured, high-volume, append-only, time-series-like
-//    No relational integrity needed; optimized for write throughput and
-//    time-range queries. No embedding relationship - fully independent docs.
-// ---------------------------------------------------------------
+
 db.createCollection("activity_logs", {
   validator: {
     $jsonSchema: {
@@ -117,12 +95,7 @@ db.createCollection("activity_logs", {
 db.activity_logs.createIndex({ timestamp: -1 });
 db.activity_logs.createIndex({ student_id: 1, timestamp: -1 });
 
-// ---------------------------------------------------------------
-// 5. assignment_submissions - semi-structured with EMBEDDED feedback
-//    Justification: feedback is 1-2 small subdocuments per submission,
-//    always fetched with the submission -> embed. File metadata (not the
-//    binary itself) is embedded since it's small & always shown together.
-// ---------------------------------------------------------------
+
 db.createCollection("assignment_submissions", {
   validator: {
     $jsonSchema: {
