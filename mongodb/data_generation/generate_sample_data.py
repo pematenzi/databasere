@@ -1,6 +1,5 @@
 """
-Generates realistic sample data for the MongoDB collections.
-Limits adjusted for a smaller institutional size (150 students).
+generating random data
 """
 import random
 import os
@@ -13,15 +12,12 @@ from mongo_common import get_db
 
 db = get_db()
 
-# Clear existing collections for a clean run[cite: 4]
 for coll in ["course_reviews", "discussion_forums", "notifications", "activity_logs", "assignment_submissions"]:
     db[coll].drop()
 
 random.seed(7)
 
-# ---------------------------------------------------------------
-# Pull real IDs from MySQL to keep cross-database references valid[cite: 4]
-# ---------------------------------------------------------------
+
 conn = mysql.connector.connect(host="localhost", user="uni_admin", password="uniadmin", database="university_portal")
 cur = conn.cursor()
 
@@ -57,9 +53,7 @@ tags_pool = ["heavy-workload", "great-instructor", "recommend", "group-projects"
 def rand_date(days_back=400):
     return datetime.now() - timedelta(days=random.randint(0, days_back), hours=random.randint(0,23))
 
-# ---------------------------------------------------------------
-# 1. course_reviews (150 documents)
-# ---------------------------------------------------------------
+
 reviews = []
 for _ in range(150):
     cid = random.choice(course_ids)
@@ -74,9 +68,7 @@ for _ in range(150):
     })
 db.course_reviews.insert_many(reviews)
 
-# ---------------------------------------------------------------
-# 2. discussion_forums (75 threads)
-# ---------------------------------------------------------------
+
 threads = []
 for _ in range(75):
     n_replies = random.randint(0, 6)
@@ -97,9 +89,7 @@ for _ in range(75):
     })
 db.discussion_forums.insert_many(threads)
 
-# ---------------------------------------------------------------
-# 3. notifications (300 documents)
-# ---------------------------------------------------------------
+
 notifications = []
 for _ in range(300):
     ntype = random.choice(["grade_posted", "payment_due", "enrollment_confirmation"])
@@ -113,9 +103,7 @@ for _ in range(300):
     })
 db.notifications.insert_many(notifications)
 
-# ---------------------------------------------------------------
-# 4. activity_logs (400 documents)
-# ---------------------------------------------------------------
+
 logs = []
 for _ in range(400):
     logs.append({
@@ -125,9 +113,7 @@ for _ in range(400):
     })
 db.activity_logs.insert_many(logs)
 
-# ---------------------------------------------------------------
-# 5. assignment_submissions (200 documents)
-# ---------------------------------------------------------------
+
 submissions = []
 for _ in range(200):
     submissions.append({
