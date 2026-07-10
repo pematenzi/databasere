@@ -1,9 +1,7 @@
 import mysql.connector
 from pymongo import MongoClient
 
-# =====================================================================
 # 1. DATABASE CONNECTIONS
-# =====================================================================
 
 def get_mysql_connection():
     return mysql.connector.connect(
@@ -18,9 +16,7 @@ def get_mongo_collection():
     db = client["university_portal_nosql"]
     return db["course_materials"]
 
-# =====================================================================
 # 2. CORE LOGIC: Fetch Student Dashboard
-# =====================================================================
 
 def get_student_dashboard(student_id):
     mysql_conn = get_mysql_connection()
@@ -82,9 +78,7 @@ def get_student_dashboard(student_id):
         cursor.close()
         mysql_conn.close()
 
-# =====================================================================
 # 3. RUN THE TEST
-# =====================================================================
 
 if __name__ == "__main__":
     # Let's test with Alice Smith (student_id = 1)
